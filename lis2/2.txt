@@ -1,0 +1,93 @@
+1H|\^&|||Mindry^^|||||||PR|1394-97|20250715122217
+P|30||994743||^^||^^|U||||||||||||||||||||||||||
+O|30|6^^|994743|CHOL^CHOLESTEROL^^\HDL D^HDL DIRECT^^\TGL^TRIGLYCERIDES^^\VLDL^VLDL^^\LDL^LDL^^\Chol/HDL^Chol/HDL^^\LDL/HDL^LDL/HDL^^|R|20250621112309|20250621112259|||||||20250621112259|serum||||||||||F|||||
+R|67|CHOL^CHOLE25
+STEROL^^F|5.663238^^^^|mmol/L|^|N||F|5.663238^^^^|0|20250621115259||Mindry^|
+R|68|HDL D^HDL DIRECT^^F|1.734593^^^^|mmol/L|^|N||F|1.734593^^^^|0|20250621115808||Mindry^|
+R|69|TGL^TRIGLYCERIDES^^F|0.845201^^^^|mmol/L|^|N||F|0.845201^^^^|0|20250621115319||Mindry^|
+R|70|VLDL^VLDL^^F|0.160000^^^^|mmol/L|^|N||F|0.160000^^^^||||Mindry^|
+R|71|LDL^LDL^^F|3.633028^^^^|mmol/L|^|N||F|3.633028^^^^||||Mindry^|
+R|72|Chol/HDL^Chol/HDL^^F|3.352941^^^^||^|N||F|3.352941^^^^||||Mindry^|
+R|73|LDL/HDL^LDL/HDL^^F|2.137075^^^^||^|N||F|2.137075^^^^||||Mindry^|
+L|28|N
+30
+
+
+1H|\^&|||Mindry^^|||||||PR|1394-97|20250715122217
+P|30||994743||^^||^^|U||||||||||||||||||||||||||
+O|30|6^^|994744|CHOL^CHOLESTEROL^^\HDL D^HDL DIRECT^^\TGL^TRIGLYCERIDES^^\VLDL^VLDL^^\LDL^LDL^^\Chol/HDL^Chol/HDL^^\LDL/HDL^LDL/HDL^^|R|20250621112309|20250621112259|||||||20250621112259|serum||||||||||F|||||
+R|67|CHOL^CHOLESTEROL^^F|5.663238^^^^|mmol/L|^|N||F|5.663238^^^^|0|20250621115259||Mindry^|
+R|68|HDL D^HDL 21
+DIRECT^^F|1.734593^^^^
+|mmol/L|^|N||F|1.734593^^^^|0|20250621115808||Mindry^|
+R|69|TGL^TRIGLYCERIDES^^F
+|0.845201^^^^|mmol/L|^|N||F|0.845201^^^^|0|20250621115319||Mindry^|
+R|70|VLDL^VLDL^^F|0.160000^^^^|mmol/L|^|N||F|0.160000^^^^||||Mindry^|
+R|71|LDL^LDL^^F|3.633028^^^^|mmol/L|^|N||F|3.633028^^^^||||Mindry^|
+R|72|Chol/HDL^Chol/HDL^^F|3.352941^^^^||^|N||F|3.352941^^^^||||Mindry^|
+R|73|LDL/HDL^LDL/HDL^^F|2.137075^^^^||^|N||F|2.137075^^^^||||Mindry^|
+L|28|N
+31
+
+1H|\^&|||Mindry^^|||||||PR|1394-97|20250715122217
+P|30||994743||^^||^^|U||||||||||||||||||||||||||
+O|30|6^^|994745|CHOL^CHOLESTEROL^^\HDL D^HDL DIRECT^^\TGL^TRIGLYCERIDES^^\VLDL^VLDL^^\LDL^LDL^^\Chol/HDL^Chol/HDL^^\LDL/HDL^LDL/HDL^^|R|20250621112309|20250621112259|||||||20250621112259|serum||||||||||F|||||
+R|67|CHOL^CHOLESTEROL^^F|5.663238^^^^|mmol/L|^|N||F|5.663238^^^^|0|20250621115259||Mindry^|
+R|68|HDL D^HDL 
+DIRECT^^F|1.734593^^^^|mmol/L|^|N||F|1.734593^^^^|0|20250621115808||Mindry^|
+R|69|TGL^TRIGLYCERIDES^^F|0.845201^^^^|mmol/L|^|N||F|0.845201^^^^|0|20250621115319||Mindry^|
+R|70|VLDL^VLDL^^F55
+|0.160000^^^^|mmol/L|^|N||F|0.160000^^^^||||Mindry^|
+R|71|LDL^LDL^^F|3.633028^^^^|mmol/L|^|N||F|3.633028^^^^||||Mindry^|
+R|72|Chol/HDL^Chol/HDL^^F|3.352941^^^^||^|N||F|3.352941^^^^||||Mindry^|
+R|73|LDL/HDL^LDL/HDL^^F|2.137075^^^^||^|N||F|2.137075^^^^||||Mindry^|
+L|28|N
+32
+
+1H|\^&|||Mindry^^|||||||PR|1394-97|20250715122217
+P|30||994743||^^||^^|U||||||||||||||||||||||||||
+O|30|6^^|994746|CHOL^CHOLESTEROL^^\HDL D^HDL DIRECT^^\TGL^TRIGLYCERIDES^^\VLDL^VLDL^^\LDL^LDL^^\Chol/HDL^Chol/HDL^^\LDL/HDL^LDL/HDL^^|R|20250621112309|20250621112259|||||||20250621112259|serum||||||||||F|||||
+R|67|CHOL^CHOLESTEROL^^F|5.663238^^^^|mmol/L|^|N||F|5.663238^^^^|0|20250621115259||Mindry^|
+R|68|HDL D^HDL DIRECT^^F|1.734593^^^^|mmol/L|^|N||F|1.734593^^^^|0|20250621115808||Mindry^|
+R|69|TGL^TRIGLYCER
+IDES^^F|0.845201^^
+^^|mmol/L|^|N||F|0.845201^^^^|0|20250621115319||Mindry^|
+R|70|VLDL^VLDL^^F|0.160000^^^^|mmol/L|^|N||F|0.160000^^^^||||Mindry^|
+R|71|LDL^LDL^^F|3.633028^^^^|mmol/L|^|N||F|3.633028^^^^||||Mindry^|
+R|72|Chol/HDL^Chol/HDL^^F|3.352941^^^^||^|N||F|3.352941^^^^||||Mindry^|
+R|73|LDL/HDL^LDL/HDL^^F|2.137075^^^^||^|N||F|2.137075^^^^||||Mindry^|
+L|28|N
+33
+
+1H|\^&|||Mindry^^|||||||PR|1394-97|20250715122217
+P|30||994747||^^||^^|U||||||||||||||||||||||||||
+O|30|6^^|994743|CHOL^CHOLESTEROL^^\HDL D^HDL DIRECT^^\TGL^TRIGLYCERIDES^^\VLDL^VLDL^^\LDL^LDL^^\Chol/HDL^Chol/HDL^^\LDL/HDL^LDL/HDL^^|R|20250621112309|20250621112259|||||||20250621112259|serum||||||||||F|||||
+R|67|CHOL^CHOLESTEROL^^F|5.663238^^^^|mmol/L|^|N||F|5.663238^^^^|0|20250621115259||Mindry^|
+R|68|HDL D^HDL DIRECT^^F|1.734593^^^^|mmol/L|^|N||F|1.734593^^^^|0|20250621115808||Mindry^|
+R|69|TGL^TRI
+GLYCERIDES^^F
+|0.845201^^^^|mmol/L|^|N||F|0.845201^^^^|0|20250621115319||Mindry^|
+R|70|VLDL^VLDL^^F|0.160000^^^^|mmol/L|^|N||F|0.160000^^^^||||Mindry^|
+R|71|LDL^L
+DL^^F|3.633028^^^^|mmol/L|^|N||F|3.633028^^^^||||Mindry^|
+R|72|Chol/H
+DL^Chol/HDL^^F|3.352941^^^^||^|N||F|3.352941^^^^||||Mindry^|
+R|73|LDL/HDL^LDL/HDL^^F|2.137075^^^^||^|N||F|2.137075^^^^||||Mindry^|
+L|28|N
+36
+
+
+1H|\^&|||Mindry^^|||||||PR|1394-97|20250715122217
+P|30||994743||^^||^^|U||||||||||||||||||||||||||
+O|30|6^^|999999|CHOL^CHOLESTEROL^^\HDL D^HDL DIRECT^^\TGL^TRIGLYCERIDES^^\VLDL^VLDL^^\LDL^LDL^^\Chol/HDL^Chol/HDL^^\LDL/HDL^LDL/HDL^^|R|20250621112309|20250621112259|||||||20250621112259|serum||||||||||F|||||
+R|67|CHOL^CHOLESTEROL^^F|5.663238^^^^|mmol/L|^|N||F|5.663238^^^^|0|20250621115259||Mindry^|
+R|68|HDL D^HDL55
+DIRECT^^F|1.734593^^^^|mmol/L|^|N||F|1.734593^^^^|0|20250621115808||Mindry^|
+R|69|TGL^TRIGLYCERIDES^^F|0.845201^^^^|mmol/L|^|N||F|0.845201^^^^|0|20250621115319||Mindry^|
+R|70|VLDL^VLDL^^F55
+|0.160000^^^^|mmol/L|^|N||F|0.160000^^^^||||Mindry^|
+R|71|LDL^LDL^^F|3.633028^^^^|mmol/L|^|N||F|3.633028^^^^||||Mindry^|
+R|72|Chol/HDL^Chol/HDL^^F|3.352941^^^^||^|N||F|3.352941^^^^||||Mindry^|
+R|73|LDL/HDL^LDL/HDL^^F|2.137075^^^^||^|N||F|2.137075^^^^||||Mindry^|
+L|28|N
+32
