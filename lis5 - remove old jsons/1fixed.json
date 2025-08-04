@@ -1,0 +1,126 @@
+
+[
+    [
+        {
+            "ACCESS2": [
+                {
+                    "case_id": "A1",
+                    "patient_id": "AP1",
+                    "test_id": "GLU, UREA",
+                    "sample_type": "Serum",
+                    "machine_id": "ACCESS2",
+                    "timestamp": "2025-07-28 12:30:00"
+                },
+                {
+                    "case_id": "A2",
+                    "patient_id": "AP2",
+                    "test_id": "GLU, UREA",
+                    "sample_type": "Serum",
+                    "machine_id": "ACCESS2",
+                    "timestamp": "2025-07-27 12:30:00"
+                },
+                {
+                    "case_id": "A001",
+                    "patient_id": "AP001",
+                    "test_id": "CRE",
+                    "sample_type": "CSF",
+                    "machine_id": "ACCESS2",
+                    "timestamp": "2025-07-13 12:00:00"
+                },
+                {
+                    "case_id": "A002",
+                    "patient_id": "AP002",
+                    "test_id": "NA",
+                    "sample_type": "Serum",
+                    "machine_id": "ACCESS2",
+                    "timestamp": "2025-07-13 12:05:00"
+                },
+                {
+                    "case_id": "A003",
+                    "patient_id": "AP003",
+                    "test_id": "CHO",
+                    "sample_type": "Serum",
+                    "machine_id": "ACCESS2",
+                    "timestamp": "2025-07-13 12:10:00"
+                },
+                {
+                    "case_id": "A004",
+                    "patient_id": "AP004",
+                    "test_id": "CRE",
+                    "sample_type": "CSF",
+                    "machine_id": "ACCESS2",
+                    "timestamp": "2025-07-25 12:00:00"
+                },
+                {
+                    "case_id": "A005",
+                    "patient_id": "AP005",
+                    "test_id": "NA",
+                    "sample_type": "Serum",
+                    "machine_id": "ACCESS2",
+                    "timestamp": "2025-07-25 12:05:00"
+                },
+                {
+                    "case_id": "A006",
+                    "patient_id": "AP006",
+                    "test_id": "CHO",
+                    "sample_type": "Serum",
+                    "machine_id": "ACCESS2",
+                    "timestamp": "2025-07-25 12:10:00"
+                }
+            ]
+        },
+        {
+            "COBAS311": [
+                {
+                    "case_id": "C1",
+                    "patient_id": "CP1",
+                    "test_id": "GLU, UREA",
+                    "sample_type": "Serum",
+                    "machine_id": "COBAS_C_111",
+                    "timestamp": "2025-07-28 12:30:00"
+                },
+                {
+                    "case_id": "C2",
+                    "patient_id": "CP2",
+                    "test_id": "GLU, UREA",
+                    "sample_type": "Serum",
+                    "machine_id": "COBAS_C_111",
+                    "timestamp": "2025-07-28 12:30:00"
+                },
+                {
+                    "case_id": "C001",
+                    "patient_id": "CP001",
+                    "test_id": "UREA",
+                    "sample_type": "Urin",
+                    "machine_id": "COBAS311",
+                    "timestamp": "2025-07-13 12:00:00"
+                },
+                {
+                    "case_id": "C002",
+                    "patient_id": "CP002",
+                    "test_id": "CL",
+                    "sample_type": "Serum",
+                    "machine_id": "COBAS311",
+                    "timestamp": "2025-07-13 12:05:00"
+                },
+                {
+                    "case_id": "C003",
+                    "patient_id": "CP003",
+                    "test_id": "UREA",
+                    "sample_type": "Urin",
+                    "machine_id": "COBAS311",
+                    "timestamp": "2025-07-27 12:00:00"
+                },
+                {
+                    "case_id": "C004",
+                    "patient_id": "CP004",
+                    "test_id": "CL",
+                    "sample_type": "Serum",
+                    "machine_id": "COBAS311",
+                    "timestamp": "2025-07-27 12:05:00"
+                }
+
+            ]
+        }
+    ]
+]

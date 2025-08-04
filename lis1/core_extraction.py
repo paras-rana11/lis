@@ -2,7 +2,7 @@ import os
 
 os.chdir(".")
 
-file_path = "C:\\practice\\LIS\\lis1\\report_file\\mispa_nano_2024-10-01_09-52-41.txt"
+file_path = "C:\\All\\LIS\\lis1\\report_file\\mispa_nano_2024-10-01_09-52-41.txt"
 
 def read_file(file_path):
     try:
@@ -10,7 +10,7 @@ def read_file(file_path):
             return file.read()
     except Exception as e:
         print("\nError while reading file: ", e)
-        return False
+        
     
 def extract_from_mispa_nano():
     machine_name = 'MISPA_NANO'
@@ -19,6 +19,9 @@ def extract_from_mispa_nano():
     patient_dict = {}
     
     data = read_file(file_path)
+    if not data:
+        print("\nError while reading file: ")
+        data = "" 
     
     astm_symbols = ['\x02', '\x03', '\x04', '\x05', '\x06', '\x15', '\x17', '\x1c', '\x0b']
 
@@ -70,6 +73,6 @@ def extract_from_mispa_nano():
 result = extract_from_mispa_nano()
 
 print("\n\n==> FINAL OUTPUT: ")
-print(result)
-# for res in result:
-#     print("=> ", res)
+# print(result)
+for res in result:
+    print("=> ", res)

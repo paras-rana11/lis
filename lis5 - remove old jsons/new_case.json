@@ -1,0 +1,26 @@
+[
+    {
+        "ACCESS2": [
+            {
+                "case_id": "A001",
+                "patient_id": "AP001",
+                "test_id": "GLU,UREA",
+                "sample_type": "Serum",
+                "machine_id": "ACCESS2",
+                "timestamp": "2025-07-17 16:22:42"
+            }
+        ]
+    },
+    {
+        "COBAS311": [
+            {
+                "case_id": "C001",
+                "patient_id": "CP001",
+                "test_id": "Na,K",
+                "sample_type": "Plasma",
+                "machine_id": "COBAS311",
+                "timestamp": "2025-07-28 16:20:18"
+            }
+        ]
+    }
+]

@@ -1,0 +1,4 @@
+2025-07-28 16:20:18,605 - INFO - \u2705 Case A001 added to new machine ACCESS2
+2025-07-28 16:20:18,609 - INFO - \u2705 Case C001 added to new machine COBAS311
+2025-07-28 16:22:42,963 - INFO - \u2705 Case A001 added to machine ACCESS2
+2025-07-28 16:22:42,963 - INFO - \u26a0\ufe0f Duplicate case C001 ignored for machine COBAS311

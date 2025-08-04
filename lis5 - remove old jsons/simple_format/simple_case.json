@@ -1,0 +1,70 @@
+{
+    "ACCESS2": [
+        {
+            "case_id": "A008",
+            "patient_id": "AP008",
+            "test_id": "UREA",
+            "sample_type": "Serum",
+            "machine_id": "ACCESS2",
+            "timestamp": "2025-07-26 12:00:00"
+        },
+        {
+            "case_id": "A009",
+            "patient_id": "AP009",
+            "test_id": "CREAT",
+            "sample_type": "Serum",
+            "machine_id": "ACCESS2",
+            "timestamp": "2025-07-27 15:00:00"
+        },
+        {
+            "case_id": "A010",
+            "patient_id": "AP010",
+            "test_id": "GLU",
+            "sample_type": "Plasma",
+            "machine_id": "ACCESS2",
+            "timestamp": "2025-07-28 09:30:00"
+        },
+        {
+            "case_id": "A001",
+            "patient_id": "AP001",
+            "test_id": "GLU,UREA",
+            "sample_type": "Serum",
+            "machine_id": "ACCESS2",
+            "timestamp": "2025-07-17 16:59:14"
+        }
+    ],
+    "COBAS311": [
+        {
+            "case_id": "C008",
+            "patient_id": "CP008",
+            "test_id": "CREAT",
+            "sample_type": "Plasma",
+            "machine_id": "COBAS311",
+            "timestamp": "2025-07-26 13:00:00"
+        },
+        {
+            "case_id": "C009",
+            "patient_id": "CP009",
+            "test_id": "Na",
+            "sample_type": "Serum",
+            "machine_id": "COBAS311",
+            "timestamp": "2025-07-27 10:20:00"
+        },
+        {
+            "case_id": "C010",
+            "patient_id": "CP010",
+            "test_id": "K",
+            "sample_type": "Plasma",
+            "machine_id": "COBAS311",
+            "timestamp": "2025-07-28 08:45:00"
+        },
+        {
+            "case_id": "C001",
+            "patient_id": "CP001",
+            "test_id": "Na,K",
+            "sample_type": "Plasma",
+            "machine_id": "COBAS311",
+            "timestamp": "2025-07-28 16:59:14"
+        }
+    ]
+}

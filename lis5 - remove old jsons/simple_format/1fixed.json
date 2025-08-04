@@ -1,0 +1,166 @@
+{
+  "ACCESS2": [
+    {
+      "case_id": "A001",
+      "patient_id": "AP001",
+      "test_id": "GLU,UREA",
+      "sample_type": "Serum",
+      "machine_id": "ACCESS2",
+      "timestamp": "2025-07-15 10:00:00"
+    },
+    {
+      "case_id": "A002",
+      "patient_id": "AP002",
+      "test_id": "CHOLESTEROL",
+      "sample_type": "Plasma",
+      "machine_id": "ACCESS2",
+      "timestamp": "2025-07-14 09:30:00"
+    },
+    {
+      "case_id": "A003",
+      "patient_id": "AP003",
+      "test_id": "BILIRUBIN",
+      "sample_type": "Serum",
+      "machine_id": "ACCESS2",
+      "timestamp": "2025-07-13 11:45:00"
+    },
+    {
+      "case_id": "A004",
+      "patient_id": "AP004",
+      "test_id": "SGPT",
+      "sample_type": "Serum",
+      "machine_id": "ACCESS2",
+      "timestamp": "2025-07-12 10:15:00"
+    },
+    {
+      "case_id": "A005",
+      "patient_id": "AP005",
+      "test_id": "SGOT",
+      "sample_type": "Serum",
+      "machine_id": "ACCESS2",
+      "timestamp": "2025-07-11 16:00:00"
+    },
+    {
+      "case_id": "A006",
+      "patient_id": "AP006",
+      "test_id": "ALKP",
+      "sample_type": "Serum",
+      "machine_id": "ACCESS2",
+      "timestamp": "2025-07-10 08:00:00"
+    },
+    {
+      "case_id": "A007",
+      "patient_id": "AP007",
+      "test_id": "T.PROTEIN",
+      "sample_type": "Plasma",
+      "machine_id": "ACCESS2",
+      "timestamp": "2025-07-09 07:45:00"
+    },
+    {
+      "case_id": "A008",
+      "patient_id": "AP008",
+      "test_id": "UREA",
+      "sample_type": "Serum",
+      "machine_id": "ACCESS2",
+      "timestamp": "2025-07-26 12:00:00"
+    },
+    {
+      "case_id": "A009",
+      "patient_id": "AP009",
+      "test_id": "CREAT",
+      "sample_type": "Serum",
+      "machine_id": "ACCESS2",
+      "timestamp": "2025-07-27 15:00:00"
+    },
+    {
+      "case_id": "A010",
+      "patient_id": "AP010",
+      "test_id": "GLU",
+      "sample_type": "Plasma",
+      "machine_id": "ACCESS2",
+      "timestamp": "2025-07-28 09:30:00"
+    }
+  ],
+  "COBAS311": [
+    {
+      "case_id": "C001",
+      "patient_id": "CP001",
+      "test_id": "Na,K",
+      "sample_type": "Plasma",
+      "machine_id": "COBAS311",
+      "timestamp": "2025-07-15 08:00:00"
+    },
+    {
+      "case_id": "C002",
+      "patient_id": "CP002",
+      "test_id": "Cl",
+      "sample_type": "Serum",
+      "machine_id": "COBAS311",
+      "timestamp": "2025-07-14 08:30:00"
+    },
+    {
+      "case_id": "C003",
+      "patient_id": "CP003",
+      "test_id": "Ca",
+      "sample_type": "Plasma",
+      "machine_id": "COBAS311",
+      "timestamp": "2025-07-13 09:15:00"
+    },
+    {
+      "case_id": "C004",
+      "patient_id": "CP004",
+      "test_id": "Mg",
+      "sample_type": "Plasma",
+      "machine_id": "COBAS311",
+      "timestamp": "2025-07-12 07:45:00"
+    },
+    {
+      "case_id": "C005",
+      "patient_id": "CP005",
+      "test_id": "Phos",
+      "sample_type": "Serum",
+      "machine_id": "COBAS311",
+      "timestamp": "2025-07-11 10:10:00"
+    },
+    {
+      "case_id": "C006",
+      "patient_id": "CP006",
+      "test_id": "GLU",
+      "sample_type": "Plasma",
+      "machine_id": "COBAS311",
+      "timestamp": "2025-07-10 11:30:00"
+    },
+    {
+      "case_id": "C007",
+      "patient_id": "CP007",
+      "test_id": "UREA",
+      "sample_type": "Serum",
+      "machine_id": "COBAS311",
+      "timestamp": "2025-07-09 14:00:00"
+    },
+    {
+      "case_id": "C008",
+      "patient_id": "CP008",
+      "test_id": "CREAT",
+      "sample_type": "Plasma",
+      "machine_id": "COBAS311",
+      "timestamp": "2025-07-26 13:00:00"
+    },
+    {
+      "case_id": "C009",
+      "patient_id": "CP009",
+      "test_id": "Na",
+      "sample_type": "Serum",
+      "machine_id": "COBAS311",
+      "timestamp": "2025-07-27 10:20:00"
+    },
+    {
+      "case_id": "C010",
+      "patient_id": "CP010",
+      "test_id": "K",
+      "sample_type": "Plasma",
+      "machine_id": "COBAS311",
+      "timestamp": "2025-07-28 08:45:00"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "cases": [
+    {
+      "case_id": "case1_c311",
+      "test_id": ["t7", "t8"],
+      "machine_id": "C_311_1",
+      "sample_type": "serum",
+      "patient_name": "p1",
+      "gender": "M"
+    },
+    {
+      "case_id": "case1_e411",
+      "test_id": ["t5", "t6"],
+      "machine_id": "E_411_1",
+      "sample_type": "serum",
+      "patient_name": "p1",
+      "gender": "M"
+    },
+    {
+      "case_id": "case1_access2",
+      "test_id": ["t9", "t10"],
+      "machine_id": "ACCESS_2",
+      "sample_type": "serum",
+      "patient_name": "p1",
+      "gender": "M"
+    },
+    {
+      "case_id": "case1_mispa_nano",
+      "test_id": ["t1", "t2"],
+      "machine_id": "MISPA_NANO",
+      "sample_type": "serum",
+      "patient_name": "p1",
+      "gender": "M"
+    },
+    {
+      "case_id": "case1_bs240",
+      "test_id": ["t3", "t4"],
+      "machine_id": "BS_240",
+      "sample_type": "serum",
+      "patient_name": "p1",
+      "gender": "M"
+    }
+  ]
+}
