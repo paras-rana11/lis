@@ -586,7 +586,7 @@ def send_to_healthray(results):
                 for item in results
             ]
         }
-
+        add_case_to_json(output_dict, results[0][0], 'sended_to_cloud.json')
         #  REAL MODE
         # Uncomment to enable real API sending
         """
@@ -614,7 +614,7 @@ def send_to_healthray(results):
                 "case_id": item[1],
                 "result": item[2],
             }
-            add_case_to_json(case_entry, item[0], 'sended_to_cloud.json')
+            # add_case_to_json(case_entry, item[0], 'sended_to_cloud.json')
 
         logger.info("Bypass mode: data written to local JSON successfully.")
         return True

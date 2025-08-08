@@ -1,3 +1,5 @@
+# handling create_case-in_machine fails then add that case entry to db and retry after 10 mins
+
 
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,7 +19,7 @@ from email.message import EmailMessage
 import sys
 import serial  # type: ignore
 import mysql.connector
-import socket
+from random import randint
 
 
 
@@ -100,34 +102,6 @@ class GenerateChecksum:
             return checksum.zfill(2)  
         return "00" 
 
-
-# Global objects and variables
-generate_checksum = GenerateChecksum()
-LOCK = RLock()
-STOP_THREAD = False
-
-# Machine Configuration
-MACHINE_NAME = 'Cobas C 311 1'
-HOST_ADDRESS = '127.0.0.1'
-HOST_PORT = 6010
-HOST_COM_PORT = 'COM1'
-MACHINE_ID = 'C_311_1'
-REPORT_FILE_PREFIX = 'c_311_1_'
-CONNECTION_TYPE = 'serial'
-
-LOG_FILE = 'C:\\ASTM\\root\\log_file\\logging_for_c_311_1.log'
-ERROR_LOG_FILE = 'C:\\ASTM\\root\\log_file\\logging_for_c_311_1_error.log'
-LOG_FILE_LIST = [LOG_FILE, ERROR_LOG_FILE]
-
-log_check_interval = 86400  # 24 hours (in seconds)
-
-SUBJECT = "Email From SGL Hospital"
-TO_EMAIL = "lishlray@gmail.com"
-FROM_EMAIL = "lishlray@gmail.com"
-PASSWORD = "rxbr zlzy tpin pgur" 
-
-
-
 class ConnectionDb:
     def __init__(self , host: str, user: str, password: str, database: str):
         self.host = host
@@ -153,9 +127,50 @@ class ConnectionDb:
         except Exception as e:
             print(f"Connection Error : {e}")
             
-DB_CONN = mysql.connector.connect(
-            host="localhost", user="root", password="rooot1", database="lis"
+def get_connection():
+    try:
+        db = ConnectionDb(
+            host="localhost",
+            user="root",
+            password="root1",
+            database="lis"
         )
+        return db.connect_db()
+    except Exception as e:
+        logger.error(f"Error creating DB connection: {e}")
+        return None
+
+
+# Global objects and variables
+generate_checksum = GenerateChecksum()
+LOCK = RLock()
+STOP_THREAD = False
+
+# Machine Configuration
+MACHINE_NAME = 'Cobas C 311 1'
+HOST_ADDRESS = '127.0.0.1'
+HOST_PORT = 6010
+HOST_COM_PORT = 'COM1'
+MACHINE_ID = 'C_311_1'
+REPORT_FILE_PREFIX = 'c_311_1_'
+CONNECTION_TYPE = 'serial'
+
+LOG_FILE = 'C:\\ASTM\\root\\log_file\\logging_for_c_311_1.log'
+ERROR_LOG_FILE = 'C:\\ASTM\\root\\log_file\\logging_for_c_311_1_error.log'
+PENDING_CASE_LOG_FILE = 'C:\\ASTM\\root\\log_file\\pending_cases_log.log'
+LOG_FILE_LIST = [LOG_FILE, ERROR_LOG_FILE, PENDING_CASE_LOG_FILE]
+
+log_check_interval = 86400  # 24 hours (in seconds)
+
+SUBJECT = "Email From SGL Hospital"
+TO_EMAIL = "lishlray@gmail.com"
+FROM_EMAIL = "lishlray@gmail.com"
+PASSWORD = "rxbr zlzy tpin pgur" 
+
+
+
+
+
            
 # connection_c_311 = MachineConnectionSerial(
 #     connection_type=CONNECTION_TYPE,
@@ -231,11 +246,15 @@ def send_mail_or_logging(error_message, error):
     [hlray LAB]
     """
 
-    is_send_mail = send_email(SUBJECT, body, TO_EMAIL, FROM_EMAIL, PASSWORD)
-    if not is_send_mail:
-        logger.error(f"Exception during sending mail")
+    # is_send_mail = send_email(SUBJECT, body, TO_EMAIL, FROM_EMAIL, PASSWORD)
+    # if not is_send_mail:
+    #     logger.error(f"Exception during sending mail")
 
-def setup_loggers(log_file, error_log_file):
+class PendingCaseFilter(logging.Filter):
+    def filter(self, record):
+        return "[PENDING]" in record.getMessage()
+
+def setup_loggers(log_file, error_log_file, pending_case_log_file):
     '''Set up separate loggers for info and error.'''
     logger = logging.getLogger('app_logger')
     try:
@@ -243,26 +262,36 @@ def setup_loggers(log_file, error_log_file):
         logger.handlers.clear()  # avoid duplicate logs on reload
 
         # Info Handler
-        info_handler = logging.FileHandler(log_file)
+        info_handler = logging.FileHandler(log_file, encoding='utf-8')
         info_handler.setLevel(logging.INFO)
         info_format = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
         info_handler.setFormatter(info_format)
 
         # Error Handler
-        error_handler = logging.FileHandler(error_log_file)
+        error_handler = logging.FileHandler(error_log_file, encoding='utf-8')
         error_handler.setLevel(logging.ERROR)
         error_format = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
         error_handler.setFormatter(error_format)
+        
+        # Pending Case Handler
+        pending_handler = logging.FileHandler(pending_case_log_file, encoding='utf-8')
+        pending_handler.setLevel(logging.INFO)
+        pending_format = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        pending_handler.setFormatter(pending_format)
+
+        # Apply custom filter
+        pending_handler.addFilter(PendingCaseFilter())
 
         logger.addHandler(info_handler)
         logger.addHandler(error_handler)
+        logger.addHandler(pending_handler)
 
         return logger
     except Exception as e:
         print(f"Error in initialize logger : {e}")
         return logger
     
-logger = setup_loggers(LOG_FILE, ERROR_LOG_FILE)
+logger = setup_loggers(LOG_FILE, ERROR_LOG_FILE, PENDING_CASE_LOG_FILE)
 logger.info('Log file initialized.')
 logger.error('This is an error log example.')
 
@@ -412,7 +441,10 @@ def remove_old_case_entries_from_files(json_file_list: List[str], days: int = 10
 
 def is_case_already_pending(case_no):
     try:
-        conn = DB_CONN
+        conn = get_connection()
+        if not conn:
+            logger.error("[PENDING] DB connection not available in is_case_already_pending")
+            return False
         cursor = conn.cursor()
         query = "SELECT COUNT(*) FROM pending_case WHERE case_no = %s"
         cursor.execute(query, (case_no,))
@@ -421,77 +453,121 @@ def is_case_already_pending(case_no):
         conn.close()
         return count > 0
     except Exception as e:
-        send_mail_or_logging("Error in is_case_already_pending", e)
+        send_mail_or_logging("[PENDING] Error in is_case_already_pending", e)
         return False  
 
 
 def insert_pending_case_to_db(case_id, test_id, sample_type, sample_type_number, machine_id):
      
     try:
-        conn = DB_CONN
+        conn = get_connection()
+        if not conn:
+            logger.error("[PENDING] DB connection not available in insert_pending_case_to_db")
+            return
         cursor = conn.cursor()
         query = """
             INSERT INTO pending_cases (case_id, test_id, sample_type, sample_type_number, machine_id)
-            VALUES (%s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s) AS new
+            ON DUPLICATE KEY UPDATE
+                test_id = new.test_id,
+                sample_type = new.sample_type,
+                sample_type_number = new.sample_type_number,
+                machine_id = new.machine_id    
         """
         values = (case_id, test_id, sample_type, sample_type_number, machine_id)
         cursor.execute(query, values)
         conn.commit()
         cursor.close()
         conn.close()
-        logger.info(f"Inserted to pending_cases: {case_id}")
+        logger.info(f"[PENDING] Inserted to pending_cases: {case_id}")
     except Exception as e:
-        send_mail_or_logging("Error inserting into pending_cases", e)
+        send_mail_or_logging("[PENDING] Error inserting into pending_cases", e)
 
 
 def check_and_retry_pending_cases(connection):
     try:
         while True:
-            conn = mysql.connector.connect(
-                host="localhost", user="root", password="", database="your_db_name"
-            )
-            cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM pending_cases")
-            rows = cursor.fetchall()
+            try:
+                logger.info("[PENDING] \n" + "=" * 100)
+                logger.info("[PENDING]  Starting new retry cycle")
+                logger.info("[PENDING] " + "=" * 100)
+                
+                conn = get_connection()
+                if conn is None:
+                    logger.warning("[PENDING] ⚠ DB connection failed. Will retry in 1 minute.")
+                    time.sleep(60)
+                    continue
+                
+                cursor = conn.cursor(dictionary=True)
+                cursor.execute("SELECT * FROM pending_cases")
+                rows = cursor.fetchall()
+                logger.info(f"[PENDING] Retry thread running at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
-            for row in rows:
-                response = create_case_in_machine(
-                    connection,
-                    row["case_id"],
-                    row["test_id"],
-                    row["sample_type"],
-                    row["sample_type_number"]
-                )
+                
+                if not rows:
+                    logger.info("[PENDING]  No pending cases found.")
+                else:
+                    logger.info(f"[PENDING]  Found {len(rows)} pending cases.")
 
-                if response.get("status") == "success":
-                    case_entry = {
-                        "case_id": row["case_id"],
-                        "test_id": row["test_id"],
-                        "sample_type": row["sample_type"],
-                        "sample_type_number": row["sample_type_number"],
-                        "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    }
-                    add_case_to_json(case_entry, row["machine_id"], 'complete_case_creation.json')
+                for row in rows:
+                    try:
+                        logger.info("[PENDING] " +  "="*80)
+                        logger.info(f"[PENDING]  Retrying case: {row['case_id']}")
+                        
+                        case_entry = {
+                            "case_id": row["case_id"],
+                            "test_id": row["test_id"],
+                            "sample_type": row["sample_type"],
+                            "sample_type_number": row["sample_type_number"],
+                            "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        }
+                        
+                        response = create_case_in_machine(
+                            connection,
+                            case_no=row["case_id"],
+                            test_id=row["test_id"],
+                            sample_type=row["sample_type"],
+                            sample_type_number=row["sample_type_number"]
+                        )
 
-                    del_query = "DELETE FROM pending_cases WHERE id = %s"
-                    cursor.execute(del_query, (row["id"],))
-                    conn.commit()
-                    logger.info(f"Case {row['case_id']} retried and removed from DB")
+                        if response.get("status") == "success":
+                            add_case_to_json(case_entry, row["machine_id"], 'complete_case_creation.json')
 
-            cursor.close()
-            conn.close()
-            time.sleep(600)  
+                            del_query = "DELETE FROM pending_cases WHERE id = %s"
+                            cursor.execute(del_query, (row["id"],))
+                            conn.commit()
+                            logger.info(f"[PENDING]  Case {row['case_id']} successfully processed and removed from DB. ✔️")
+                        else:
+                            add_case_to_json(case_entry, row["machine_id"], 'error_case_creation.json')
+                            logger.warning(f"[PENDING]  Retry failed for Case {row['case_id']}: {response.get('message')}. ❌")
+
+                    except Exception as e:
+                        send_mail_or_logging(f"[PENDING] Error processing case {row['case_id']}.⚠️", e)
+                        
+                cursor.close()
+                conn.close()
+            
+            except Exception as e:
+                logger.exception(f"[PENDING] Exception occurred during retry cycle: {e}. ⚠️")
+                
+            logger.info("[PENDING] " +  "="*80)
+            logger.info("[PENDING] Waiting 1 minute before next retry cycle...\n")
+            time.sleep(60)
+              
     except Exception as e:
-        send_mail_or_logging("Error in retry pending case thread", e)
+        send_mail_or_logging("[PENDING] Error in retry pending case thread", e)
+    
 
 
 def create_case_in_machine(connection, case_no, test_id, sample_type, sample_type_number):
     """Send commands to the machine to create a case."""
     with LOCK:
         try:
+            """
             logger.info(" ")
             logger.info("***  CASE CREATION PROCESS STARTED  ***")
             logger.info("*****************************************************")
+        
             connection.write(generate_checksum.ENQ.encode())
             byte = connection.read()
 
@@ -541,15 +617,32 @@ def create_case_in_machine(connection, case_no, test_id, sample_type, sample_typ
                     return {"status": "error", "message": "Termination Message Not Acknowledged"}
             else:
                 return {"status": "error", "message": "ENQ Message Not Acknowledged"}
+            """
+            logger.info(f"Creating case in machine: {case_no}")
+            try:
+                num = randint(0, 1)    # generate 0 or 1
+                print("\n\nnum:", num)
+                if num:  
+                    print("success:", num, "=True")
+                    return {"status": "success", "message": "Case created"}
+                else:
+                    print("Fails:", num, "=False")
+                    return {"status": "error", "message": "Machine did not respond "}
+            except Exception as e:
+                return {"status": "error", "message": str(e)}
+            
         except Exception as e:
-            error_message = 'Error in create case in machine'
+            error_message = '[PENDING] Error in create case in machine'
             send_mail_or_logging(error_message, e)
             return {"status": "error", "message": str(e)}
+            
+  
 
 
 
 
 def retry_api_call(connection, case_id, test_id, sample_type, machine_id):
+    
     """Retry API call to ensure the case is created."""
     try:
         counter = 0
@@ -572,7 +665,10 @@ def retry_api_call(connection, case_id, test_id, sample_type, machine_id):
                     logger.info(f"COUNTER :- {counter}")
                     return response
                 else:
+                    case_entry = {"case_id": case_id, "test_id": test_id, "sample_type": sample_type, "sample_type_number": sample_type_number, "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+                    add_case_to_json(case_entry, machine_id, 'error_case_creation.json')
                     insert_pending_case_to_db(case_id, test_id, sample_type, sample_type_number, MACHINE_ID)
+                    logger.info(f"COUNTER :- {counter}")
                     return response
 
             except Exception as e:
@@ -667,16 +763,24 @@ def bypass(case_id, test_id, sample_type, machine_id):
         }
         sample_type_number = sample_type_map.get(sample_type, 1)
 
-        case_entry = {
-            "case_id": case_id,
-            "test_id": test_id,
-            "sample_type": sample_type,
-            "sample_type_number": sample_type_number,
-            "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        }
+        while True:
+            try:
+                response = create_case_in_machine(case_id, test_id, sample_type, sample_type_number)
+                if response["status"] == "success":
+                    case_entry = {"case_id": case_id, "test_id": test_id, "sample_type": sample_type, "sample_type_number": sample_type_number, "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+                    add_case_to_json(case_entry, machine_id, 'complete_case_creation.json')
+                    logger.info(f"COUNTER :- {counter}")
+                    return response
+                else:
+                    insert_pending_case_to_db(case_id, test_id, sample_type, sample_type_number, MACHINE_ID)
+                    return response
 
-        add_case_to_json(case_entry, machine_id, 'complete_case_creation.json')
-        logger.info("Bypass Case Created Successfully")
+            except Exception as e:
+                print(f"Error in API call: {e}")
+                case_entry = {"case_id": case_id, "test_id": test_id, "sample_type": sample_type, "sample_type_number": sample_type_number, "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S'), "status":"Error"}
+                add_case_to_json(case_entry, machine_id, 'error_case_creation.json')
+            counter+=1
+            time.sleep(5)
     except Exception as e:
         logger.error(f"Error in bypass function: {e}")
         case_entry = {
@@ -726,6 +830,7 @@ if __name__ == "__main__":
             os.path.join(CASE_FILE_PATH, 'error_case_creation.json'),
         ]
         threading.Thread(target=remove_old_case_entries_from_files, args=(JSON_FILE_LIST, 10, 86400), daemon=True).start()
+        # start_receiving_data(connection_c_311)
         # threading.Thread(target=check_and_retry_pending_cases, args=(connection_c_311,), daemon=True).start()
         threading.Thread(target=check_and_retry_pending_cases, args=(None,), daemon=True).start()
         uvicorn.run(app, host=HOST_ADDRESS, port=HOST_PORT)
