@@ -1,17 +1,7 @@
 # handling create_case-in_machine fails then add that case entry to db and retry after 10 mins
 # SET 60 TO 600 BAKI
 
-# | API Trigger  | BI Running  | UNI Allowed   | RETRY Allowed  |
-# | ------------ | ----------- | ------------- | -------------- |
-# | ✅ Yes       | ✅ Yes      | ❌ No        | ❌ No          |
-# | ❌ No + UNI  | ❌ No       | ✅ Yes       | ❌ No          |
-# | ❌ No + No   | ❌ No       | ❌ No        | ✅ Yes         |
 
-# | What’s Running       | RETRY Runs? | Reason                      |
-# | -------------------- | ----------- | --------------------------- |
-# | BI = ON              | ❌ No        | BI has top priority         |
-# | UNI = ON             | ❌ No        | UNI has priority over retry |
-# | BI = OFF + UNI = OFF | ✅ Yes       | Retry allowed every 10 min  |
 
 # ==============================================================================
 # ✅ 0. Imports
@@ -29,14 +19,11 @@ import mysql.connector
 import mysql.connector.pooling
 from pydantic import BaseModel
 from typing import List, Dict, Any
-from threading import RLock, Thread
 from datetime import datetime, timedelta
 from email.message import EmailMessage
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
-
-
 
 
 
@@ -52,7 +39,7 @@ CONNECTION_TYPE = 'serial'
 
 
 # Global objects and variables
-LOCK = RLock()
+LOCK =  threading.Lock()
 FLAG_LOCK = threading.Lock()
 
 
@@ -71,14 +58,13 @@ LOG_FILE_LIST = [LOG_FILE, ERROR_LOG_FILE, PENDING_CASE_LOG_FILE]
 log_check_interval = 86400  # 24 hours (in seconds)
 
 SUBJECT = "Email From SGL Hospital"
-TO_EMAIL = "@gmail.com"                             # NOTE: to change
-FROM_EMAIL = "@gmail.com"
+TO_EMAIL = "lishealthray@gmail.com"                            # NOTE: to change
+FROM_EMAIL = "lishealthray@gmail.com"
 PASSWORD = "rxbr zlzy tpin pgur" 
 
 REPORT_FILE_PATH = 'C:\\ASTM\\root\\report_file\\'
 CASE_FILE_PATH = 'C:\\ASTM\\root\\case_file\\'
 LOG_FILE_PATH = 'C:\\ASTM\\root\\log_file\\'
-
 
 
 
@@ -111,7 +97,6 @@ def setup_loggers(log_file, error_log_file, pending_case_log_file):
         pending_handler.setLevel(logging.INFO)
         pending_format = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
         pending_handler.setFormatter(pending_format)
-
         # Apply custom filter
         pending_handler.addFilter(PendingCaseFilter())
 
@@ -173,9 +158,8 @@ def send_mail_or_logging(error_message, error):
 
     Best regards,  
     Laboratory Information System  
-    [ ________ LAB]                     
+    [Healthray LAB]                     
     """
-    # NOTE: to change [ ________ LAB]  
 
     is_send_mail = send_email(SUBJECT, body, TO_EMAIL, FROM_EMAIL, PASSWORD)
     if not is_send_mail:
@@ -206,7 +190,6 @@ def remove_old_logs_from_log_file(log_file_list):
     except Exception as e:
         error_message = 'Error in remove old log'
         send_mail_or_logging(error_message, e)
-
 
 
 
@@ -286,7 +269,6 @@ class MachineConnectionSerial:
         self.port.write(byte)
         print(f"Query Sent: {byte}")
 
-
 # Try to establish connection
 try:
     connection_c_311 = MachineConnectionSerial(
@@ -300,45 +282,6 @@ try:
 except Exception as e:
     error_message = 'Failed to establish machine connection'
     send_mail_or_logging(error_message, e)
-
-
-class ConnectionDb:
-    def __init__(self , host: str, user: str, password: str, database: str):
-        self.host = host
-        self.user = user
-        self.password = password
-        self.database = database
-
-    def connect_db(self):
-        try:
-            conn = mysql.connector.connect(
-                host=self.host,
-                user=self.user,
-                password=self.password,
-                database=self.database
-            )
-            if conn:
-                print("*******************************************")
-                print("***********  DATABASE CONNECTED ***********")
-                print("*******************************************")
-                return conn
-            else:
-                return "Connectiona Not Established"
-        except Exception as e:
-            print(f"Connection Error : {e}")
-            
-def get_connection():
-    try:
-        db = ConnectionDb(
-            host="localhost",
-            user="root",
-            password="root1",
-            database="lis"
-        )
-        return db.connect_db()
-    except Exception as e:
-        print(f"Error creating DB connection: {e}")
-        return None
 
 
 class DBConnectionPool:
@@ -438,9 +381,9 @@ def add_case_to_json(case_entry: Dict[str, Any], machine_id: str, file_name: str
     logger.info(f"Upserted case under {machine_id} in {file_name}: {case_entry}")
 
 #  Prune old cases (per machine_id)
-def remove_old_case_entries_from_files(json_file_list: List[str], days: int = 10, sleep_interval: int = 86400):
+def remove_old_case_entries_from_json_files(json_file_list: List[str], days: int = 10, sleep_interval: int = 86400):
     try:
-        logger.info("Thread start: remove_old_case_entries_from_files")
+        logger.info("Thread start: remove_old_case_entries_from_json_files")
         while True:
             cutoff = datetime.now() - timedelta(days=days)
 
@@ -473,7 +416,7 @@ def remove_old_case_entries_from_files(json_file_list: List[str], days: int = 10
             time.sleep(sleep_interval)
 
     except Exception as e:
-        send_mail_or_logging("Fatal error in remove_old_case_entries_from_files", e)
+        send_mail_or_logging("Fatal error in remove_old_case_entries_from_json_files", e)
 
 
 
@@ -487,8 +430,8 @@ def is_case_in_pending_cases(case_no):
             logger.error("[PENDING] DB connection not available in is_case_in_pending_cases")
             return False
         cursor = conn.cursor()
-        query = "SELECT COUNT(*) FROM pending_cases WHERE case_id = %s"
-        cursor.execute(query, (case_no,))
+        query = "SELECT COUNT(*) FROM pending_cases WHERE case_id = %s AND machine_id = %s"
+        cursor.execute(query, (case_no, MACHINE_ID))
         count = cursor.fetchone()[0]
         cursor.close()
         conn.close()
@@ -517,10 +460,9 @@ def insert_pending_case_to_db(case_id, test_id, sample_type, sample_type_number,
             INSERT INTO pending_cases (case_id, test_id, sample_type, sample_type_number, machine_id)
             VALUES (%s, %s, %s, %s, %s) AS new
             ON DUPLICATE KEY UPDATE
-                test_id = new.test_id,
-                sample_type = new.sample_type,
-                sample_type_number = new.sample_type_number,
-                machine_id = new.machine_id    
+                test_id = VALUES(test_id),
+                sample_type = VALUES(sample_type),
+                sample_type_number = VALUES(sample_type_number);
         """
         values = (case_id, test_id, sample_type, sample_type_number, machine_id)
         cursor.execute(insert_query, values)
@@ -534,7 +476,7 @@ def insert_pending_case_to_db(case_id, test_id, sample_type, sample_type_number,
             "sample_type_number": sample_type_number,
             "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
-        logger.info(f"[PENDING] Upserted to pending_cases: {case_id} || Values: {case_entry}")
+        logger.info(f"[PENDING] Upserted to pending_cases: {case_id}, machine_id={machine_id} || Values: {case_entry}")
     except Exception as e:
         send_mail_or_logging("[PENDING] Error inserting into pending_cases", e)
         
@@ -542,14 +484,17 @@ def delete_pending_case(case_id_db):
     try:
         conn = db_pool.get_connection()
         cursor = conn.cursor()
-        del_query = "DELETE FROM pending_cases WHERE case_id = %s"
-        cursor.execute(del_query, (case_id_db,))
+        del_query = "DELETE FROM pending_cases WHERE case_id = %s AND machine_id = %s"
+        cursor.execute(del_query, (case_id_db, MACHINE_ID))
         conn.commit()
+        if cursor.rowcount == 0:
+            logger.warning(f"[PENDING] No record deleted for case_id={case_id_db} and machine_id={MACHINE_ID}")
+        else:
+            logger.info(f"[PENDING] Case ID {case_id_db} deleted from pending_cases table for machine {MACHINE_ID}. 🗑️")
         cursor.close()
-        logger.info(f"[PENDING] Case ID {case_id_db} deleted from pending_cases table. 🗑️")
     except Exception as e:
-        logger.error(f"[PENDING] Failed to delete case ID {case_id_db}. ⚠️")
-        send_mail_or_logging(f"[PENDING] DB deletion error for case ID {case_id_db}", e)
+        logger.error(f"[PENDING] Failed to delete case ID {case_id_db} for machine {MACHINE_ID}. ⚠️")
+        send_mail_or_logging(f"[PENDING] DB deletion error for case ID {case_id_db} on machine {MACHINE_ID}", e)
     finally:
         if conn:
             conn.close()
@@ -567,12 +512,11 @@ def check_and_retry_pending_cases(connection):
                 continue
             else:
                 IS_RECIEVING_DATA = False
-        try:
-            with FLAG_LOCK:
                 IS_PENDING_RETRY_RUNNING = True
-            
+                
+        try: 
             logger.info("[PENDING] \n" + "=" * 100)
-            logger.info("[PENDING]  Starting new retry cycle")
+            logger.info("[PENDING] Starting new retry cycle")
             logger.info("[PENDING] " + "=" * 100)
             
             conn = db_pool.get_connection()
@@ -581,7 +525,7 @@ def check_and_retry_pending_cases(connection):
                 time.sleep(60)
                 continue
             cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM pending_cases")
+            cursor.execute("SELECT * FROM pending_cases where machine_id = %s", (MACHINE_ID,))
             rows = cursor.fetchall()
             logger.info(f"[PENDING] Retry thread running at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             
@@ -591,6 +535,7 @@ def check_and_retry_pending_cases(connection):
                 logger.info(f"[PENDING]  Found {len(rows)} pending cases.")
             
             for row in rows:
+                logger.info(f"[PENDING] Processing MACHINE_ID: '{row['machine_id']}', DATA: {row}")
                 case_id = row['case_id']
                 with FLAG_LOCK:
                     if case_id in RETRY_IN_PROGRESS:
@@ -619,9 +564,7 @@ def check_and_retry_pending_cases(connection):
 
                     if response.get("status") == "success":
                         add_case_to_json(case_entry, row["machine_id"], 'complete_case_creation.json')
-
-                        delete_pending_case(row["id"])
-                        
+                        delete_pending_case(row["case_id"])
                         logger.info(f"[PENDING]  Case {row['case_id']} successfully processed and removed from DB. ✔️")
                     else:
                         add_case_to_json(case_entry, row["machine_id"], 'error_case_creation.json')
@@ -650,7 +593,6 @@ def check_and_retry_pending_cases(connection):
 
 
 
-
 # ✅ 6. Machine Communication Core - BIDIRECTION
 def send_message(connection, message):
     """Send a framed message with checksum to the machine."""
@@ -663,15 +605,11 @@ def send_message(connection, message):
         error_message = 'Error in send msg function'
         send_mail_or_logging(error_message, e)
 
-def create_case_in_machine(connection, case_no, test_id, sample_type, sample_type_number):
+def create_case_in_machine1(connection, case_no, test_id, sample_type, sample_type_number):
     """Send commands to the machine to create a case."""
     
     with LOCK:
         try:
-            # logger.info(" ")
-            # logger.info("***  CASE CREATION PROCESS STARTED  ***")
-            # logger.info("*****************************************************")
-        
             connection.write(generate_checksum.ENQ.encode())
             byte = connection.read()
             logger.info(f"[BI] Read byte (create_case_in_machine) : {byte}")
@@ -729,17 +667,43 @@ def create_case_in_machine(connection, case_no, test_id, sample_type, sample_typ
             return {"status": "error", "message": str(e)}
 
 
+import random
+def create_case_in_machine(connection, case_no, test_id, sample_type, sample_type_number):
+    """Send commands to the machine to create a case."""
+    
+    with LOCK:
+        try:
+            choice = random.choice(["success", "error", "exception"])
+            
+            if choice == "success":
+                # logger.info(f"[BI-TEST] Simulating SUCCESS for case {case_no}")
+                return {"status": "success", "message": "Case created successfully "}
+            
+            elif choice == "error":
+                # logger.info(f"[BI-TEST] Simulating FAILURE for case {case_no}")
+                return {"status": "error", "message": "Faled"}
+            
+            else:  # exception
+                # logger.info(f"[BI-TEST] Simulating EXCEPTION for case {case_no}")
+                raise Exception("exception during case creation")
+            
+            # Original code commented out for now...
+            
+        except Exception as e:
+            error_message = '[PENDING] Error in create case in machine'
+            send_mail_or_logging(error_message, e)
+            return {"status": "error", "message": str(e)}
+
 
 # ✅ 7. Retry Mechanism
 def retry_api_call(connection, case_id, test_id, sample_type, machine_id):
     
     """Retry API call to ensure the case is created."""
     global IS_BIDIRECTIONAL_RUNNING, IS_UNIDIRECTIONAL_RUNNING, IS_PENDING_RETRY_RUNNING
-
+    
     with FLAG_LOCK:
         IS_BIDIRECTIONAL_RUNNING = True
         IS_UNIDIRECTIONAL_RUNNING = False
-        IS_PENDING_RETRY_RUNNING = False
             
         if case_id in RETRY_IN_PROGRESS:
             logger.info(f"[RETRY-API] Skipping retry for case {case_id} — already in progress.")
@@ -793,7 +757,6 @@ def retry_api_call(connection, case_id, test_id, sample_type, machine_id):
         except Exception as e :
             response = {"status": "error", "message": f"{e}"}
             logger.error(f"{response['message']}")
-
             
         if response["status"] == "success":
             case_entry["status"] = "Success"
@@ -802,7 +765,6 @@ def retry_api_call(connection, case_id, test_id, sample_type, machine_id):
             
             if is_case_in_pending_cases(case_id):
                 delete_pending_case(case_id)
-
 
         else:
             case_entry["status"] = "Error"
@@ -855,7 +817,7 @@ def continuous_receiving_data(connection):
             with FLAG_LOCK:
                 if not IS_RECIEVING_DATA:
                     break  # exit if flag turned off
-                
+            
             with LOCK:
                 if connection:
                     try:
@@ -902,6 +864,11 @@ def continuous_receiving_data(connection):
 
     except Exception as e:
         send_mail_or_logging('[UNI] Error in continuous_receiving_data()', e)
+    finally:
+        with FLAG_LOCK:
+            IS_UNIDIRECTIONAL_RUNNING = False
+            IS_RECIEVING_DATA = False
+        
 
 
 
@@ -933,15 +900,22 @@ async def api_create_case(request: CreateCaseRequest, background_tasks: Backgrou
     try:
         
         sample_type_number = {"S1": 1, "S2": 2, "S3": 3, "S4": 4}.get(request.sample_type, 1)
-        # Read flags under lock
+        
         with FLAG_LOCK:
             uni_running = IS_UNIDIRECTIONAL_RUNNING
-            bi_running = IS_BIDIRECTIONAL_RUNNING
-            retry_running = IS_PENDING_RETRY_RUNNING
-        # --- decide based purely on uni-directional and retry flags ---
-        if uni_running:
-            # ✅ Scenario 1: UNI is running → store in pending
-            logger.warning("[BI-API] UNI is running → storing case in pending DB")
+            pending_retry_running = IS_PENDING_RETRY_RUNNING
+            
+        if uni_running or pending_retry_running:
+            # ✅ Scenario 1: UNI or pending retry is running → store in pending
+            reason = []
+            if uni_running:
+                reason.append("UNI is running")
+            if pending_retry_running:
+                reason.append("Pending retry is running")
+            reason_str = " & ".join(reason)
+            
+            logger.warning(f"[BI-API] {reason_str} → storing case in pending DB")
+            
             insert_pending_case_to_db(
                 case_id=request.case_id,
                 test_id=request.test_id,
@@ -949,7 +923,7 @@ async def api_create_case(request: CreateCaseRequest, background_tasks: Backgrou
                 sample_type_number=sample_type_number,
                 machine_id=request.machine_id
             )
-            logger.info(f"[BI-API] Stored case in pending case bcoz uni is running: {request.case_id}")
+            logger.info(f"[BI-API] Stored case in pending case because {reason_str}: {request.case_id}")
             return {"status":200, "statusState":"pending", "message":"Stored in pending"}
 
         else:
@@ -968,7 +942,7 @@ async def api_create_case(request: CreateCaseRequest, background_tasks: Backgrou
                         request.sample_type,
                         request.machine_id
                     )
-                    logger.info(f"[BI-API] Successfully create case to machine func called for {request.case_id} || Response: {response['message']}")
+                    logger.info(f"[BI-API] Successfully create_case_to_machine func called for {request.case_id} && Response: {response['message']}")
                 except Exception as e:
                     logger.error(f"[BI-API] Error in BI task for case {request.case_id}: {e}")
                     send_mail_or_logging("Error in BI task", e)
@@ -1003,7 +977,6 @@ def schedule_pending_retry(connection, interval_sec=600):
     if any exist, run exactly one pass of check_and_retry_pending_cases.
     """
     while True:
-
         global IS_PENDING_RETRY_RUNNING
         with FLAG_LOCK:
             IS_PENDING_RETRY_RUNNING = True
@@ -1053,15 +1026,14 @@ def monitor_flags_and_manage_threads(connection):
             # ——— Uni-directional allowed ———
             if not bi_running:
                 byte = connection.read()
-                logger.info(f"[UNI] Read byte (monitor_flags_and_manage_threads): {byte}")
-                
+                logger.info(f"[UNI] Read byte (monitor_flags_and_manage_threads): {byte}, IS_UNI_RUNNING: {uni_running}")
+    
                 # ✅ Start UNI only when ENQ (0x05) received
                 if not uni_running and byte == b'\x05':
-                    logger.info("[UNI] ENQ received → starting unidirectional mode")
+                    logger.info(f"[UNI] ENQ {byte} received → starting unidirectional mode")
                     with FLAG_LOCK:
                         last_byte_time = time.time()  # ✅ reset on start
-                    logger.info(f"{last_byte_time}")
-                    with FLAG_LOCK:
+                        logger.info(f"{last_byte_time}")
                         IS_UNIDIRECTIONAL_RUNNING = True
                         IS_RECIEVING_DATA = True
                     continuous_receiving_data(connection)
@@ -1083,18 +1055,15 @@ def monitor_flags_and_manage_threads(connection):
                 # BI is running → ensure UNI stopped
                 with FLAG_LOCK:
                     IS_UNIDIRECTIONAL_RUNNING = False
-                    IS_RECIEVING_DATA = False  # Retry may now proceed
+                    IS_RECIEVING_DATA = False  
 
                 if bi_running:
                     logger.debug("Monitoring paused – API in progress")
-
                 time.sleep(0.1)  # prevent tight loop
 
         except Exception as e:
             send_mail_or_logging("Critical exception in monitoring loop", e)
-
         time.sleep(0.1)
-
 
 def start_monitoring():
     """Start the monitoring thread"""
@@ -1110,10 +1079,9 @@ def start_monitoring():
     except Exception as e:
         error_message = 'Failed to establish machine connection'
         send_mail_or_logging(error_message, e)
-
-
-    
         
+        
+ 
 # ✅ 11. Main Execution - # Main         
 if __name__ == "__main__":
     try:
@@ -1126,10 +1094,9 @@ if __name__ == "__main__":
             os.path.join(CASE_FILE_PATH, 'complete_case_creation.json'),
             os.path.join(CASE_FILE_PATH, 'error_case_creation.json'),
         ]
-        threading.Thread(target=remove_old_case_entries_from_files, args=(JSON_FILE_LIST, 10, 86400), daemon=True).start()
+        threading.Thread(target=remove_old_case_entries_from_json_files, args=(JSON_FILE_LIST, 10, 86400), daemon=True).start()
         
         threading.Thread(target=remove_old_logs_from_log_file, args=(LOG_FILE_LIST,), daemon=True).start()
-        
 
         # Start the FastAPI server
         uvicorn.run(app, host=HOST_ADDRESS, port=HOST_PORT)
