@@ -10,7 +10,7 @@ db_config = {
 }
 
 sample_types = ['serum', 'plasma', 'whole_blood', 'urine']
-machines = ['C_311_1', 'BS_240', 'UNKNOWN']
+machines = ['C_311_2', 'BS_240', 'UNKNOWN']
 
 def generate_test_id():
     # Randomly join 1 to 4 test ids like t1//t24//t3

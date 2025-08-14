@@ -210,12 +210,14 @@ def extract_report_data_mispa_fab_120(data):
 
 def extract_report_data_access_2(access_data):
     lines = access_data.strip().split('\x02')
-    machine_name, patient_name, test_name, test_result = 'ACCESS', 'N/A', 'N/A', 'N/A'
+    # machine_name, patient_name, test_name, test_result = 'ACCESS', 'N/A', 'N/A', 'N/A'
+    machine_name, patient_name, test_name, test_result = 'XN_1000', 'N/A', 'N/A', 'N/A'
     final_list = []
     patientId = None
     for line in lines:
         if line.startswith('1H'):
-            machine_name = line.split('|')[4]
+            # machine_name = line.split('|')[4]
+            pass
         elif line.startswith('3O'):
             rerun_case_no = line.split('|')[2]
             raw_patientId = line.split('|')[2]
@@ -231,7 +233,8 @@ def extract_report_data_access_2(access_data):
     return final_list
 
 def extract_report_data_au_480(au_data):
-    machine_name, patient_name = "AU_480", "N/A"
+    # machine_name, patient_name = "AU_480", "N/A"
+    machine_name, patient_name = "GEM_PREMIER_3000", "N/A"
     final_list = []
     sub_data = au_data.strip().split()
     if len(sub_data) > 3:
@@ -252,7 +255,8 @@ def extract_report_data_au_480(au_data):
 def extract_report_data_mindray_bc_5130(data):
     lines = data.split('\n')
     patientId = None
-    machine_name = "Mindray_BC_5130"
+    # machine_name = "Mindray_BC_5130"
+    machine_name = "ELITE_580"
     report_data = {}
     patients = []
     for line in lines:
@@ -642,7 +646,7 @@ def extract_list_data_from_txt_file(folder_path):
 
 def send_to_healthray(results):
     try:
-        url = "http://192.168.1.69:4206/api/v1/lis_case_result"
+        url = "http://192.168.1.61:4200/api/v1/lis_case_result"
 
         expiry_time = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=50000)
         payload = {

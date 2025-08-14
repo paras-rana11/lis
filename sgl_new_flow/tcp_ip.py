@@ -13,6 +13,7 @@ from pydantic import BaseModel # type: ignore
 from email.message import EmailMessage
 from fastapi.middleware.cors import CORSMiddleware # type: ignore
 from fastapi import FastAPI, HTTPException, BackgroundTasks # type: ignore
+from SGL_PROPER.healper import MachineConnectionTcp
 
 class GenerateChecksum:
     def __init__(self):
